@@ -1,0 +1,406 @@
+{
+  "entities": {
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Authenticated user's Google profile metadata and preferences, isolated strictly to the owner.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID of the user.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Verified Google account email address.",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name shown on the user's profile.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Avatar photo URL or compressed data URL for the user profile.",
+          "maxLength": 65536
+        },
+        "preferredLang": {
+          "type": "string",
+          "enum": ["kh", "en"],
+          "description": "Preferred reading and UI language."
+        },
+        "bio": {
+          "type": "string",
+          "description": "Optional short reader bio.",
+          "maxLength": 300
+        },
+        "dailyGoal": {
+          "type": "integer",
+          "description": "Daily target number of episodes to read (1 to 50)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the profile was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the profile was last updated."
+        }
+      },
+      "required": ["uid", "email", "displayName", "photoURL", "preferredLang", "createdAt", "updatedAt"]
+    },
+    "UserReadingState": {
+      "title": "UserReadingState",
+      "description": "Authenticated user's subscribed series, liked episodes, and reading history.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID of the user.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "subscribedIds": {
+          "type": "array",
+          "description": "Bounded list of subscribed series IDs (max 100)."
+        },
+        "likedEpisodeIds": {
+          "type": "array",
+          "description": "Bounded list of liked episode IDs (max 200)."
+        },
+        "readEpisodeIds": {
+          "type": "array",
+          "description": "Bounded list of read episode IDs (max 200)."
+        },
+        "dailyProgressDate": {
+          "type": "string",
+          "description": "Local YYYY-MM-DD date string for today's reading progress.",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "dailyReadEpisodeIds": {
+          "type": "array",
+          "description": "Bounded list of episode IDs read today (max 100)."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when reading state was updated."
+        }
+      },
+      "required": ["uid", "subscribedIds", "likedEpisodeIds", "readEpisodeIds", "updatedAt"]
+    },
+    "SiteConfig": {
+      "title": "SiteConfig",
+      "description": "Global site configuration, announcement banner, featured/hidden series overrides managed by site admins.",
+      "type": "object",
+      "properties": {
+        "announcementEnabled": {
+          "type": "boolean",
+          "description": "Whether the global top announcement banner is visible."
+        },
+        "announcementKh": {
+          "type": "string",
+          "description": "Announcement banner text in Khmer.",
+          "maxLength": 200
+        },
+        "announcementEn": {
+          "type": "string",
+          "description": "Announcement banner text in English.",
+          "maxLength": 200
+        },
+        "announcementTone": {
+          "type": "string",
+          "enum": ["emerald", "amber", "slate"],
+          "description": "Visual tone of the announcement banner."
+        },
+        "canvasSubmissionsEnabled": {
+          "type": "boolean",
+          "description": "Whether public Canvas series submissions are open."
+        },
+        "hiddenSeriesIds": {
+          "type": "array",
+          "description": "Bounded list of series IDs hidden from public discovery (max 100)."
+        },
+        "featuredSeriesIds": {
+          "type": "array",
+          "description": "Bounded list of series IDs pinned to the Hero Showcase (max 20)."
+        },
+        "updatedBy": {
+          "type": "string",
+          "format": "email",
+          "description": "Verified admin email that last updated the site configuration.",
+          "maxLength": 254
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when site config was last updated."
+        }
+      },
+      "required": [
+        "announcementEnabled",
+        "announcementKh",
+        "announcementEn",
+        "announcementTone",
+        "canvasSubmissionsEnabled",
+        "hiddenSeriesIds",
+        "featuredSeriesIds",
+        "updatedBy",
+        "updatedAt"
+      ]
+    },
+    "SiteTeam": {
+      "title": "SiteTeam",
+      "description": "RBAC directory of verified Admin and Moderator Google email allowlists managed by admins.",
+      "type": "object",
+      "properties": {
+        "adminEmails": {
+          "type": "array",
+          "description": "Bounded list of verified Admin emails (max 25)."
+        },
+        "moderatorEmails": {
+          "type": "array",
+          "description": "Bounded list of verified Moderator emails (max 50)."
+        },
+        "displayNames": {
+          "type": "object",
+          "description": "Map of lowercase staff email to display name."
+        },
+        "updatedBy": {
+          "type": "string",
+          "format": "email",
+          "description": "Verified admin email that last updated the team directory.",
+          "maxLength": 254
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when team directory was last updated."
+        }
+      },
+      "required": ["adminEmails", "moderatorEmails", "displayNames", "updatedBy", "updatedAt"]
+    },
+    "StaffRole": {
+      "title": "StaffRole",
+      "description": "Individual staff role assignment for an Admin or Moderator account.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Document ID matching the staff role record.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Lowercase Google account email granted staff privileges.",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name for the team member.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "moderator"],
+          "description": "Assigned role level (admin or moderator)."
+        },
+        "note": {
+          "type": "string",
+          "description": "Optional note describing staff responsibility.",
+          "maxLength": 200
+        },
+        "addedBy": {
+          "type": "string",
+          "format": "email",
+          "description": "Verified admin email who created or updated this role.",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the role was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the role was last updated."
+        }
+      },
+      "required": ["id", "email", "displayName", "role", "addedBy", "createdAt", "updatedAt"]
+    },
+    "ActivityLog": {
+      "title": "ActivityLog",
+      "description": "Immutable audit log entry recording actions taken by verified Admins and Moderators.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Document ID matching the activity log entry.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "actorEmail": {
+          "type": "string",
+          "format": "email",
+          "description": "Verified Google email of the admin or moderator who performed the action.",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "actorName": {
+          "type": "string",
+          "description": "Display name of the actor at the time of the action.",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "actorRole": {
+          "type": "string",
+          "enum": ["super_admin", "admin", "moderator"],
+          "description": "Role held by the actor when performing the action."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["staff", "series", "episode", "comment", "ads", "settings"],
+          "description": "Domain category of the audited action."
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "staff_added",
+            "staff_role_changed",
+            "staff_removed",
+            "series_created",
+            "series_updated",
+            "series_deleted",
+            "series_hidden",
+            "series_restored",
+            "series_featured",
+            "series_unfeatured",
+            "series_reordered",
+            "episode_added",
+            "episode_updated",
+            "episode_deleted",
+            "comment_deleted",
+            "ad_created",
+            "ad_updated",
+            "ad_toggled",
+            "ad_deleted",
+            "ads_settings_updated",
+            "settings_updated",
+            "settings_reset"
+          ],
+          "description": "Specific operation performed by the actor."
+        },
+        "targetId": {
+          "type": "string",
+          "description": "Optional identifier of the affected series, episode, comment, or staff record.",
+          "maxLength": 128
+        },
+        "targetLabel": {
+          "type": "string",
+          "description": "Human-readable label of the affected target.",
+          "minLength": 1,
+          "maxLength": 160
+        },
+        "details": {
+          "type": "string",
+          "description": "Optional concise summary of changes made.",
+          "maxLength": 300
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the activity log entry was recorded."
+        }
+      },
+      "required": ["id", "actorEmail", "actorName", "actorRole", "category", "action", "targetLabel", "createdAt"]
+    },
+    "SiteAds": {
+      "title": "SiteAds",
+      "description": "Admin-managed sponsor advertising configuration and bounded active/scheduled campaigns.",
+      "type": "object",
+      "properties": {
+        "adsEnabled": {
+          "type": "boolean",
+          "description": "Master switch controlling whether sponsor ads render on the storefront and reader."
+        },
+        "campaigns": {
+          "type": "array",
+          "description": "Bounded list of sponsor ad campaigns (max 15)."
+        },
+        "adsterra": {
+          "type": "object",
+          "description": "Optional Adsterra Publishers integration settings and bounded ad unit zones (max 10)."
+        },
+        "adskeeper": {
+          "type": "object",
+          "description": "Optional AdsKeeper Dashboard integration settings and bounded widget units (max 10)."
+        },
+        "adsense": {
+          "type": "object",
+          "description": "Optional Google AdSense publisher ID, Auto Ads switch, and bounded ad slot sizes/units (max 10)."
+        },
+        "updatedBy": {
+          "type": "string",
+          "format": "email",
+          "description": "Verified admin email that last updated sponsor campaigns.",
+          "maxLength": 254
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when sponsor ads configuration was last updated."
+        }
+      },
+      "required": ["adsEnabled", "campaigns", "updatedBy", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/private/info": {
+      "schema": { "$ref": "#/entities/UserPrivateInfo" },
+      "description": "Owner-only Google profile and preferences document."
+    },
+    "/users/{userId}/private/readingState": {
+      "schema": { "$ref": "#/entities/UserReadingState" },
+      "description": "Owner-only webtoon subscriptions, likes, and reading history."
+    },
+    "/site/config": {
+      "schema": { "$ref": "#/entities/SiteConfig" },
+      "description": "Global site administration settings document."
+    },
+    "/site/ads": {
+      "schema": { "$ref": "#/entities/SiteAds" },
+      "description": "Admin-managed sponsor ads and partner campaign directory."
+    },
+    "/site/team": {
+      "schema": { "$ref": "#/entities/SiteTeam" },
+      "description": "Admin-managed RBAC allowlist for Admins and Moderators."
+    },
+    "/staffRoles/{staffId}": {
+      "schema": { "$ref": "#/entities/StaffRole" },
+      "description": "Individual staff role assignments readable by admins and the assigned user."
+    },
+    "/activityLogs/{logId}": {
+      "schema": { "$ref": "#/entities/ActivityLog" },
+      "description": "Append-only audit trail of admin and moderator operations."
+    }
+  }
+}

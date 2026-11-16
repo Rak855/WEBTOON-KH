@@ -1,0 +1,8 @@
+{
+  "name": "WEBTOON KH",
+  "description": "Bilingual Khmer and English digital webcomic platform for Originals, Daily Schedules, Canvas indie series, and vertical-scroll comic reading.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
